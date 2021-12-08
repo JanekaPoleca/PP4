@@ -1,0 +1,4 @@
+module Cipher.Substitute
+(
+
+) where
