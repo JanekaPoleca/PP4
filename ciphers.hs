@@ -8,7 +8,7 @@ module Ciphers
     cesar :: String -> Int -> String -> String 
     cesar dir key =
         let shift = if dir == "enc" then key else -key
-        in map (\x -> shiftCes x shift)
+        in map (`shiftCes` shift)
 
     shiftCes :: Char -> Int -> Char 
     shiftCes ch shift
@@ -28,6 +28,5 @@ module Ciphers
         |isAlpha x = shiftCes x (k*ctrl):shiftVig xs key ctrl
         |otherwise = x:shiftVig xs (k:key) ctrl 
     
-
     vigKey :: String -> [Int]
     vigKey = map (\x -> (ord x - ord 'A') `mod` 26) 
