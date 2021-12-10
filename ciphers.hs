@@ -1,9 +1,11 @@
 module Ciphers
 (cesar
 ,vigenere
+,substitution
 ) where
 
-    import Data.Char ( ord, isAlpha, isUpper, chr )
+    import Data.Char ( ord, isAlpha, isUpper, chr, toLower, toUpper )
+    import Data.List ( nub, (\\) )
 
     cesar :: String -> Int -> String -> String 
     cesar dir key =
@@ -29,4 +31,18 @@ module Ciphers
         |otherwise = x:shiftVig xs (k:key) ctrl 
     
     vigKey :: String -> [Int]
-    vigKey = map (\x -> (ord x - ord 'A') `mod` 26) 
+    vigKey = map (\x -> (ord x - ord 'A') `mod` 26)
+
+    substitution :: String -> String -> String -> String
+    substitution dir key xs =
+        let func = if dir == "enc" then zip else flip zip
+            newKey = nub key ++ (['A'..'Z'] \\ key)
+        in shiftSub xs (func ['A'..'Z'] newKey)
+    
+    shiftSub :: String -> [(Char,Char)] -> String
+    shiftSub [] _ = []
+    shiftSub _ [] = error "empty key"
+    shiftSub (x:xs) key
+        |isAlpha x = rightCase (foldl (\acc (a,b) -> if a == toUpper x then b else acc) ' ' key):shiftSub xs key
+        |otherwise = x:shiftSub xs key
+        where rightCase = if isUpper x then toUpper else toLower 
